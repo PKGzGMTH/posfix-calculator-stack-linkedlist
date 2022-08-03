@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 
 typedef struct	s_stack
@@ -8,32 +9,19 @@ typedef struct	s_stack
 	struct s_stack	*next;
 }	t_stack;
 
-// create linked list
-t_stack	*init_stack(void)
-{
-	t_stack	*dest;
-
-	// calloc is malloc but in memory is not contain any data
-	dest = (t_stack*) calloc (sizeof(t_stack), 1);
-	if (!dest)
-		return (NULL);
-	dest->next = NULL;
-	return (dest);
-}
-
-// add linked list to first of stack
+// create and add linked list to first of stack
 bool	push(int num, t_stack **stack)
 {
 	t_stack	*dest;
 
-	dest = init_stack();
+	dest = (t_stack*) calloc (sizeof(t_stack), 1);
 	if (!dest)
 		return (0);
 	dest->data = num;
-	if (!*stack)
-		dest->next = NULL;
-	else
+	if (*stack)
 		dest->next = *stack;
+	else
+		dest->next = NULL;
 	*stack = dest;
 	return (1);
 }
@@ -43,27 +31,17 @@ bool	pop(int *top, t_stack **stack)
 {
 	t_stack	*temp;
 
-	temp = NULL;
+	// if stack is not NULL then pop!
 	if (*stack)
 	{
-		if ((*stack)->next)
-			temp = (*stack)->next;
-		*top = (*stack)->data;
-		free (*stack);
-		if (temp)
-			*stack = temp;
-		else
-			*stack = NULL;
+		temp = *stack;
+		*top = temp->data;
+		*stack = (*stack)->next;
+		free(temp);
 		return (1);
 	}
 	else
 		return (0);
-}
-
-// check argument is an operator
-bool is_operator(char *c)
-{
-	return (*c == '+' || *c == '-' || *c == 'x' || *c == '/');
 }
 
 // calculate n1 and n2 with operator
@@ -87,7 +65,6 @@ int	main(int argc, char **argv)
 	t_stack	*stack;
 
 	i = 1;
-	value = 0;
 	stack = NULL;
 	// if argc == 1 it's mean no argument entered
 	if (argc == 1)
@@ -96,10 +73,14 @@ int	main(int argc, char **argv)
 	{
 		while (i < argc)
 		{
-			if (!is_operator(argv[i]))
+			// check first of argument[i] is not + - x /
+			//	then use atoi to convert string to int
+			if (!strchr("+-x/", argv[i][0]))
 				push(atoi(argv[i]), &stack);
 			else
 			{
+				// if stack can pop 2 element then calculate
+				// and push value to top of stack
 				if (pop(&n2, &stack) && pop(&n1, &stack))
 				{
 					value = calculate(argv[i], n1, n2);
@@ -108,8 +89,15 @@ int	main(int argc, char **argv)
 			}
 			i++;
 		}
-		pop(&value, &stack);
-		printf("%d\n", value);
+		// if stack is empty
+		if (!stack)
+			printf("Error! Empty Stack!\n");
+		// if stack is remaining data more than one
+		else if (stack->next)
+			printf("Error! there is Remaining data in Stack!\n");
+		// if stack can pop the element
+		else if (pop(&value, &stack))
+			printf("value is: %d\n", value);
 	}
 	return (0);
 }
