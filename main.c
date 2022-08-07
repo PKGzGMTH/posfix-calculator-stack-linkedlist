@@ -76,7 +76,10 @@ int	main(int argc, char **argv)
 			// check first of argument[i] is not + - x /
 			//	then use atoi to convert string to int
 			if (!strchr("+-x/", argv[i][0]))
-				push(atoi(argv[i]), &stack);
+			{
+				if (!push(atoi(argv[i]), &stack))
+					return (-1);
+			}
 			else
 			{
 				// if stack can pop 2 element then calculate
@@ -84,7 +87,8 @@ int	main(int argc, char **argv)
 				if (pop(&n2, &stack) && pop(&n1, &stack))
 				{
 					value = calculate(argv[i], n1, n2);
-					push(value, &stack);
+					if (!push(value, &stack))
+						return (-1);
 				}
 			}
 			i++;
