@@ -54,7 +54,31 @@ int	calculate(char *c, int n1, int n2)
 		case 'x': return (n1 * n2); break;
 		case '/': return (n1 / n2); break;
 	}
-	return (1);
+	return (0);
+}
+
+void print_result(t_stack *stack, int value)
+{
+	// if stack is empty
+	if (!stack)
+		printf("Error! Empty Stack!\n");
+	// if stack is remaining data more than one
+	else if (stack->next)
+	{
+		printf("Error! there is Remaining data in Stack!\n");
+		// traverse in linked-list
+		while (stack)
+		{
+			printf ("%d", stack->data);
+			printf (" -> ");
+			if (!stack->next)
+				printf ("Null\n");
+			stack = stack->next;
+		}
+	}
+	// if stack can pop the element
+	else if (pop(&value, &stack))
+		printf("value is: %d\n", value);
 }
 
 // argc is argument count
@@ -66,42 +90,32 @@ int	main(int argc, char **argv)
 
 	i = 1;
 	stack = NULL;
-	// if argc == 1 it's mean no argument entered
+	// if argc == 1 it's mean no argument entered except "./a.out"
 	if (argc == 1)
 		printf("Please Enter a argument!!!\nExample:\n./a.out 3 4 5 x +\n");
 	else
 	{
 		while (i < argc)
 		{
-			// check first of argument[i] is not + - x /
-			//	then use atoi to convert string to int
 			if (!strchr("+-x/", argv[i][0]))
 			{
+				// check first of argument[i] is not + - x /
+				//	then use atoi to convert string to int
 				if (!push(atoi(argv[i]), &stack))
 					return (-1);
 			}
-			else
+			else if (pop(&n2, &stack) && pop(&n1, &stack))
 			{
-				// if stack can pop 2 element then calculate
-				// and push value to top of stack
-				if (pop(&n2, &stack) && pop(&n1, &stack))
-				{
-					value = calculate(argv[i], n1, n2);
-					if (!push(value, &stack))
-						return (-1);
-				}
+				//	then use atoi to convert string to int
+				value = calculate(argv[i], n1, n2);
+				if (!push(value, &stack))
+					return (-1);
 			}
+			else
+				break;
 			i++;
 		}
-		// if stack is empty
-		if (!stack)
-			printf("Error! Empty Stack!\n");
-		// if stack is remaining data more than one
-		else if (stack->next)
-			printf("Error! there is Remaining data in Stack!\n");
-		// if stack can pop the element
-		else if (pop(&value, &stack))
-			printf("value is: %d\n", value);
+		print_result(stack, value);
 	}
 	return (0);
 }
