@@ -14,14 +14,12 @@ bool	push(int num, t_stack **stack)
 {
 	t_stack	*dest;
 
+	dest = NULL;
 	dest = (t_stack*) calloc (sizeof(t_stack), 1);
 	if (!dest)
 		return (0);
 	dest->data = num;
-	if (*stack)
-		dest->next = *stack;
-	else
-		dest->next = NULL;
+	dest->next = *stack;
 	*stack = dest;
 	return (1);
 }
