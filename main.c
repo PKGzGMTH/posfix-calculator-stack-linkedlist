@@ -99,10 +99,15 @@ int	main(int argc, char **argv)
 			{
 				// check first of argument[i] is not + - x /
 				//	then use atoi to convert string to int
-				if (!push(atoi(argv[i]), &stack))
+				if (!atoi(argv[i]) && strcmp(argv[i], "0"))
+				{
+					printf("Please Enter only Numeric and + - x / only!\n");
+					return (-1);
+				}
+				else if (!push(atoi(argv[i]), &stack))
 					return (-1);
 			}
-			else if (pop(&n2, &stack) && pop(&n1, &stack))
+			else if (strlen(argv[i]) == 1 && pop(&n2, &stack) && pop(&n1, &stack))
 			{
 				//	then use atoi to convert string to int
 				value = calculate(argv[i], n1, n2);
@@ -110,7 +115,10 @@ int	main(int argc, char **argv)
 					return (-1);
 			}
 			else
-				break;
+			{
+				printf("Error, Please check your Input.\n");
+				return (-1);
+			}
 			i++;
 		}
 		print_result(stack, value);
