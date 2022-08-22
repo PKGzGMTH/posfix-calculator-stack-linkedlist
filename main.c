@@ -59,24 +59,22 @@ void print_result(t_stack *stack, int value)
 {
 	// if stack is empty
 	if (!stack)
-		printf("Error! Empty Stack!\n");
+		printf("Empty Stack!\n");
 	// if stack is remaining data more than one
 	else if (stack->next)
 	{
-		printf("Error! there is Remaining data in Stack!\n");
+		printf("There is Remaining data in Stack!\n");
 		// traverse in linked-list
 		while (stack)
 		{
-			printf ("%d", stack->data);
-			printf (" -> ");
-			if (!stack->next)
-				printf ("Null\n");
+			printf ("%d -> ", stack->data);
 			stack = stack->next;
 		}
+		printf ("Null\n");
 	}
 	// if stack can pop the element
 	else if (pop(&value, &stack))
-		printf("value is: %d\n", value);
+		printf("Value is: %d\n", value);
 }
 
 // argc is argument count
@@ -116,8 +114,8 @@ int	main(int argc, char **argv)
 			}
 			else
 			{
-				printf("Error, Please check your Input.\n");
-				return (-1);
+				printf("Error! Please check your Input.\n");
+				break;
 			}
 			i++;
 		}
